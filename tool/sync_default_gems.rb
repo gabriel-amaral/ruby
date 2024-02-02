@@ -123,7 +123,7 @@ module SyncDefaultGems
     repo, = REPOSITORIES[gem]
     puts "Sync #{repo}"
 
-    upstream = File.join("..", "..", repo)
+    upstream = File.join("..", repo)
 
     case gem
     when "rubygems"
@@ -839,7 +839,12 @@ module SyncDefaultGems
     end
     gem = ARGV.shift
     if ARGV[0]
-      exit sync_default_gems_with_commits(gem, ARGV, edit: edit)
+      if ARGV[0].start_with?("--url=")
+        url = ARGV[0].sub!(/\A--url=/, "")
+        exit sync_default_gems_with_url(gem, url, edit: edit)
+      else
+        exit sync_default_gems_with_commits(gem, ARGV, edit: edit)
+      end
     elsif auto
       exit sync_default_gems_with_commits(gem, true, edit: edit)
     else
